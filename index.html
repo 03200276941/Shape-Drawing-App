@@ -1,90 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Toolbox Shapes</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Drawing App</title>
+<style>
+  :root {
+    --primary: #4361ee;
+    --primary-light: #4895ef;
+    --secondary: #3f37c9;
+    --dark: #1b263b;
+    --light: #f8f9fa;
+    --gray: #adb5bd;
+    --success: #4cc9f0;
+  }
 
-    .toolbox {
-      background-color: black;
-      height: 4rem;
-      width: 140.5vh;
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      padding-left: 1rem;
-    }
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-color: #f5f7fb;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    display: flex;
+    flex-direction: column;
+    color: var(--dark);
+  }
 
-    .toolbox div {
-      border: 2px solid rgb(255, 235, 51);
-    }
+  .header {
+    padding: 1.5rem;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 10;
+  }
 
-    .circle {
-      height: 1.5rem;
-      width: 1.5rem;
-      border-radius: 50%;
-      background-color: white;
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--success));
+    opacity: 0.8;
+  }
 
-    }
+  .container {
+    display: flex;
+    gap: 20px;
+    padding: 1.5rem;
+    flex: 1;
+  }
 
-    .square {
-      height: 1.5rem;
-      width: 1.5rem;
-      background-color: white;
+  .controls {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
 
-    }
+  .control-group {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
 
-    .rectangle {
-      height: 1.5rem;
-      width: 2.5rem;
-      background-color: white;
+  .control-group h3 {
+    margin-top: 0;
+    color: var(--primary);
+  }
 
-    }
+  .colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-    .oval {
-      height: 1.5rem;
-      width: 2.5rem;
-      border-radius: 50%;
-      background-color: white;
+  .color {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
 
+  .shapes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .shape {
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  .canvas {
+    flex-grow: 1;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    background-color: white;
+    background-image: 
+      linear-gradient(#e9ecef 1px, transparent 1px),
+      linear-gradient(90deg, #e9ecef 1px, transparent 1px);
+    background-size: 24px 24px;
+    cursor: crosshair;
+    border-radius: 16px;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+      0 2px 4px -1px rgba(0, 0, 0, 0.02),
+      inset 0 0 20px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .circle,
+  .square,
+  .rectangle,
+  .triangle,
+  .oval {
+    position: absolute;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  .square {
+    width: 50px;
+    height: 50px;
+  }
+
+  .rectangle {
+    width: 80px;
+    height: 50px;
+  }
+
+  .triangle {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 50px solid;
+    background: transparent !important;
+    border-radius: 0 !important;
+  }
+
+  .oval {
+    width: 80px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  .footer {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--gray);
+    background-color: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.25px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .footer strong {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  @media (min-width: 768px) {
+    .footer {
+      flex-direction: row;
+      justify-content: center;
+      gap: 1rem;
     }
-    .red{
-        background-color: red;
-        height: 2rem;
-        width: 2rem;
-    }
-    .Green{
-        background-color: green;
-        height: 2rem;
-        width: 2rem;
-    }
-    .Blue{
-        background-color: blue;
-        height: 2rem;
-        width: 2rem;
-    }
-    .white{
-        background-color: white;
-        height: 2rem;
-        width: 2rem;
-    }
-  </style>
+  }
+</style>
+
 </head>
 <body>
-  <div class="toolbox">
-    <div class="circle"></div>
-    <div class="square"></div>
-    <div class="rectangle"></div>
-    <div class="oval"></div>
-    <div class="red"></div>
-    <div class="Green"></div>
-    <div class="Blue"></div>
-    <div class="white"></div>
-  </div>
+    <div class="header">Shape Drawing App</div>
+    
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <h3>Colors</h3>
+                <div class="colors">
+                    <div class="color" id="red" style="background-color: red;" onclick="selectColor(this)"></div>
+                    <div class="color" id="blue" style="background-color: blue;" onclick="selectColor(this)"></div>
+                    <div class="color" id="green" style="background-color: green;" onclick="selectColor(this)"></div>
+                    <div class="color" id="yellow" style="background-color: yellow;" onclick="selectColor(this)"></div>
+                    <div class="color" id="purple" style="background-color: purple;" onclick="selectColor(this)"></div>
+                    <div class="color" id="orange" style="background-color: orange;" onclick="selectColor(this)"></div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Shapes</h3>
+                <div class="shapes">
+                    <div class="shape" id="circle" onclick="selectShape(this)">○</div>
+                    <div class="shape" id="square" onclick="selectShape(this)">□</div>
+                    <div class="shape" id="rectangle" onclick="selectShape(this)">▭</div>
+                    <div class="shape" id="triangle" onclick="selectShape(this)">△</div>
+                    <div class="shape" id="oval" onclick="selectShape(this)">⬯</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="canvas" onclick="drawShape(event)">
+        </div>
+    </div>
+    
+    <div class="footer">
+        <span>Created by <strong>M.Bakhtawar khan</strong></span>
+        <span>Student of <strong>SMIT</strong></span>
+        <span>Trainer: <strong>Sir Ahmed Ashraf</strong></span>
+    </div>
+    
+    <script>
+    let activeShape = '';
+    let previousShape = null;
+    let activeColor = null;
+
+    function selectColor(div) {
+        // Reset all borders
+        document.querySelectorAll('.color').forEach(c => c.style.border = '2px solid transparent');
+
+        div.style.border = '3px solid black';
+        activeColor = div.id;
+    }
+
+    function selectShape(div) {
+        if (previousShape) {
+            previousShape.style.backgroundColor = 'white';
+        }
+        activeShape = div.id;
+        div.style.backgroundColor = 'orange';
+        previousShape = div;
+    }
+
+    function drawShape(event) {
+        if (!activeShape || !activeColor) {
+            alert('Please select both a shape and a color.');
+            return;
+        }
+
+        const canvas = document.querySelector('.canvas');
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        const shapeDiv = document.createElement('div');
+        shapeDiv.classList.add(activeShape);
+
+        if (activeShape === 'triangle') {
+            shapeDiv.style.borderBottomColor = activeColor;
+        } else {
+            shapeDiv.style.backgroundColor = activeColor;
+        }
+
+        // Position adjustment based on shape
+        if (activeShape === 'rectangle' || activeShape === 'oval') {
+            shapeDiv.style.left = `${x - 40}px`;
+            shapeDiv.style.top = `${y - 25}px`;
+        } else {
+            shapeDiv.style.left = `${x - 25}px`;
+            shapeDiv.style.top = `${y - 25}px`;
+        }
+
+        shapeDiv.onclick = function(e) {
+            e.stopPropagation();
+            changeColor(this);
+        };
+
+        canvas.appendChild(shapeDiv);
+    }
+
+    function color() {
+        return Math.round(Math.random() * 255);
+    }
+
+    function changeColor(div) {
+        if (!activeColor) return;
+        if (div.classList.contains('triangle')) {
+            div.style.borderBottomColor = activeColor;
+        } else {
+            div.style.backgroundColor = activeColor;
+        }
+    }
+
+    // Attach draw handler
+    document.querySelector('.canvas').addEventListener('click', drawShape);
+    </script>
 </body>
 </html>
